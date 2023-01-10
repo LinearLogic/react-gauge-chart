@@ -40,6 +40,7 @@ const GaugeChart = (props) => {
   const pieChart = useRef(pie())
   const prevProps = useRef(props)
   let selectedRef = useRef({})
+  const { label, labelFontSize } = props
 
   const initChart = useCallback(
     (update, resize = false, prevProps) => {
@@ -59,7 +60,9 @@ const GaugeChart = (props) => {
           svg,
           props,
           container,
-          arcData
+          arcData,
+          label,
+          labelFontSize
         )
         return
       }
@@ -97,7 +100,9 @@ const GaugeChart = (props) => {
         svg,
         props,
         container,
-        arcData
+        arcData,
+        label,
+        labelFontSize
       )
     },
     [props]
@@ -144,7 +149,9 @@ const GaugeChart = (props) => {
         svg,
         props,
         container,
-        arcData
+        arcData,
+        label,
+        labelFontSize
       )
     }
     //Set up resize event listener to re-render the chart everytime the window is resized
@@ -244,7 +251,9 @@ const renderChart = (
   svg,
   props,
   container,
-  arcData
+  arcData,
+  label,
+  labelFontSize
 ) => {
   updateDimensions(props, container, margin, width, height)
   //Set dimensions of svg element and translations
@@ -280,7 +289,7 @@ const renderChart = (
       return d.data.color
     })
 
-  drawNeedle(resize, prevProps, props, width, needle, container, outerRadius, g)
+  drawNeedle(resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize)
   //Translate the needle starting point to the middle of the arc
   needle.current.attr('transform', 'translate(' + outerRadius.current + ', ' + outerRadius.current + ')')
 }
@@ -301,7 +310,7 @@ const getColors = (props, nbArcsToDisplay) => {
 }
 
 //If 'resize' is true then the animation does not play
-const drawNeedle = (resize, prevProps, props, width, needle, container, outerRadius, g) => {
+const drawNeedle = (resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize) => {
   const { percent, needleColor, needleBaseColor, hideText, animate } = props
   var needleRadius = 15 * (width.current / 500), // Make the needle radius responsive
     centerPoint = [0, -needleRadius / 2]
@@ -318,7 +327,7 @@ const drawNeedle = (resize, prevProps, props, width, needle, container, outerRad
     .attr('r', needleRadius)
     .attr('fill', needleBaseColor)
   if (!hideText) {
-    addText(percent, props, outerRadius, width, g)
+    addText(percent, props, outerRadius, width, g, label, labelFontSize)
   }
   //Rotate the needle
   if (!resize && animate) {
@@ -363,22 +372,34 @@ const percentToRad = (percent) => {
 }
 
 //Adds text undeneath the graft to display which percentage is the current one
-const addText = (percentage, props, outerRadius, width, g) => {
+const addText = (percentage, props, outerRadius, width, g, label, labelFontSize) => {
   const { formatTextValue, fontSize } = props
-  var textPadding = 20
-  const text = formatTextValue ? formatTextValue(floatingNumber(percentage)) : floatingNumber(percentage) + '%'
-  g.current
+  var textPadding = 40
+  const pctString = formatTextValue ? formatTextValue(floatingNumber(percentage)) : floatingNumber(percentage) + '%'
+  const textGroup = g.current
     .append('g')
     .attr('class', 'text-group')
     .attr('transform', `translate(${outerRadius.current}, ${outerRadius.current / 2 + textPadding})`)
+  textGroup
     .append('text')
-    .text(text)
+    .text(pctString)
     // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
     .style('font-size', () =>
-      fontSize ? fontSize : `${width.current / 11 / (text.length > 10 ? text.length / 10 : 1)}px`
+      fontSize ? fontSize : `${width.current / 11 / (pctString.length > 10 ? pctString.length / 10 : 1)}px`
     )
     .style('fill', props.textColor)
     .style('text-anchor', 'middle')
+
+  if (label) {
+    textGroup
+      .append('text')
+      .text(label)
+      .attr('transform', `translate(0, 40)`)
+      // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
+      .style('font-size', labelFontSize)
+      .style('fill', props.textColor)
+      .style('text-anchor', 'middle')
+  }
 }
 
 const floatingNumber = (value, maxDigits = 2) => {
