@@ -291,6 +291,28 @@ const renderChart = (
       return d.data.color
     })
 
+  // draw range markers
+  const rangeMarkers = g.current.append('g')
+  rangeMarkers.attr('class', 'text-group')
+  console.log(rangeMarkers)
+  rangeMarkers
+    .append('text')
+    .text('0')
+    // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
+    .style('font-size', 24) // todo: receive as prop
+    .style('fill', props.needleColor)
+    .style('text-anchor', 'middle')
+    .style('transform', `translate(14px, 92%)`)
+
+  rangeMarkers
+    .append('text')
+    .text('100')
+    // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
+    .style('font-size', 24) // todo: receive as prop
+    .style('fill', props.needleColor)
+    .style('text-anchor', 'middle')
+    .style('transform', `translate(345px, 92%)`)
+
   drawNeedle(resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize)
   //Translate the needle starting point to the middle of the arc
   needle.current.attr('transform', 'translate(' + outerRadius.current + ', ' + outerRadius.current + ')')
@@ -318,7 +340,7 @@ const getColors = (props, nbArcsToDisplay) => {
 //If 'resize' is true then the animation does not play
 const drawNeedle = (resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize) => {
   const { percent, needleColor, hideText } = props
-  const isolesTrianglePath = 'M 122 0 L 112 12 L 112 -12'
+  const isolesTrianglePath = 'M 140 0 L 130 12 L 130 -12'
   needle.current
     .append('path')
     .attr('d', isolesTrianglePath)
