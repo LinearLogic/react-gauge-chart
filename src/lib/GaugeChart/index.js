@@ -20,6 +20,8 @@ const defaultStyle = {
   width: '100%',
 }
 
+const INACTIVE_COLOR = '#ccc'
+
 // Props that should cause an animation on update
 const animateNeedleProps = ['marginInPercent', 'arcPadding', 'percent', 'nrOfLevels', 'animDelay']
 
@@ -304,7 +306,11 @@ const getColors = (props, nbArcsToDisplay) => {
     .interpolate(interpolateHsl)
   var colorArray = []
   for (var i = 1; i <= nbArcsToDisplay.current; i++) {
-    colorArray.push(colorScale(i))
+    if (i / nbArcsToDisplay.current > props.percent) {
+      colorArray.push(INACTIVE_COLOR)
+    } else {
+      colorArray.push(colorScale(i))
+    }
   }
   return colorArray
 }
@@ -312,7 +318,7 @@ const getColors = (props, nbArcsToDisplay) => {
 //If 'resize' is true then the animation does not play
 const drawNeedle = (resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize) => {
   const { percent, needleColor, hideText } = props
-  const isolesTrianglePath = 'M 125 0 L 115 12 L 115 -12'
+  const isolesTrianglePath = 'M 122 0 L 112 12 L 112 -12'
   needle.current
     .append('path')
     .attr('d', isolesTrianglePath)

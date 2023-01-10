@@ -21,7 +21,7 @@ const App = () => {
               arcPadding={0}
               cornerRadius={0}
               colors={['#71ceff', '#71ffd1']}
-              needleColor="#aaa"
+              needleColor='#aaa'
             />
           </Col>
         </Row>
