@@ -13,7 +13,7 @@ const App = () => {
               style={{}}
               animate={false}
               percent={0.7}
-              fontSize={60}
+              fontSize={58}
               label='Read rate'
               labelFontSize={30}
               nrOfLevels={30}
@@ -21,6 +21,7 @@ const App = () => {
               arcPadding={0}
               cornerRadius={0}
               colors={['#71ceff', '#71ffd1']}
+              needleColor="#aaa"
             />
           </Col>
         </Row>

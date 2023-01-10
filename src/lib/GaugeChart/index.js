@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react'
-import { arc, pie, select, easeElastic, scaleLinear, interpolateHsl, interpolateNumber } from 'd3'
+import { arc, pie, select, scaleLinear, interpolateHsl } from 'd3'
 import PropTypes from 'prop-types'
 
 import useDeepCompareEffect from './customHooks'
@@ -176,7 +176,7 @@ GaugeChart.defaultProps = {
   arcPadding: 0.05, //The padding between arcs, in rad
   arcWidth: 0.2, //The width of the arc given in percent of the radius
   colors: ['#00FF00', '#FF0000'], //Default defined colors
-  textColor: '#fff',
+  textColor: '#555',
   needleColor: '#464A4F',
   needleBaseColor: '#464A4F',
   hideText: false,
@@ -311,64 +311,16 @@ const getColors = (props, nbArcsToDisplay) => {
 
 //If 'resize' is true then the animation does not play
 const drawNeedle = (resize, prevProps, props, width, needle, container, outerRadius, g, label, labelFontSize) => {
-  const { percent, needleColor, needleBaseColor, hideText, animate } = props
-  var needleRadius = 15 * (width.current / 500), // Make the needle radius responsive
-    centerPoint = [0, -needleRadius / 2]
-  //Draw the triangle
-  //var pathStr = `M ${leftPoint[0]} ${leftPoint[1]} L ${topPoint[0]} ${topPoint[1]} L ${rightPoint[0]} ${rightPoint[1]}`;
-  const prevPercent = prevProps ? prevProps.percent : 0
-  var pathStr = calculateRotation(prevPercent || percent, outerRadius, width)
-  needle.current.append('path').attr('d', pathStr).attr('fill', needleColor)
-  //Add a circle at the bottom of needle
+  const { percent, needleColor, hideText } = props
+  const isolesTrianglePath = 'M 125 0 L 115 12 L 115 -12'
   needle.current
-    .append('circle')
-    .attr('cx', centerPoint[0])
-    .attr('cy', centerPoint[1])
-    .attr('r', needleRadius)
-    .attr('fill', needleBaseColor)
+    .append('path')
+    .attr('d', isolesTrianglePath)
+    .attr('fill', needleColor)
+    .attr('transform', `rotate(${percent * 180 - 180})`)
   if (!hideText) {
     addText(percent, props, outerRadius, width, g, label, labelFontSize)
   }
-  //Rotate the needle
-  if (!resize && animate) {
-    needle.current
-      .transition()
-      .delay(props.animDelay)
-      .ease(easeElastic)
-      .duration(props.animateDuration)
-      .tween('progress', function () {
-        const currentPercent = interpolateNumber(prevPercent, percent)
-        return function (percentOfPercent) {
-          const progress = currentPercent(percentOfPercent)
-          return container.current.select(`.needle path`).attr('d', calculateRotation(progress, outerRadius, width))
-        }
-      })
-  } else {
-    container.current.select(`.needle path`).attr('d', calculateRotation(percent, outerRadius, width))
-  }
-}
-
-const calculateRotation = (percent, outerRadius, width) => {
-  var needleLength = outerRadius.current * 0.55, //TODO: Maybe it should be specified as a percentage of the arc radius?
-    needleRadius = 15 * (width.current / 500),
-    theta = percentToRad(percent),
-    centerPoint = [0, -needleRadius / 2],
-    topPoint = [centerPoint[0] - needleLength * Math.cos(theta), centerPoint[1] - needleLength * Math.sin(theta)],
-    leftPoint = [
-      centerPoint[0] - needleRadius * Math.cos(theta - Math.PI / 2),
-      centerPoint[1] - needleRadius * Math.sin(theta - Math.PI / 2),
-    ],
-    rightPoint = [
-      centerPoint[0] - needleRadius * Math.cos(theta + Math.PI / 2),
-      centerPoint[1] - needleRadius * Math.sin(theta + Math.PI / 2),
-    ]
-  var pathStr = `M ${leftPoint[0]} ${leftPoint[1]} L ${topPoint[0]} ${topPoint[1]} L ${rightPoint[0]} ${rightPoint[1]}`
-  return pathStr
-}
-
-//Returns the angle (in rad) for the given 'percent' value where percent = 1 means 100% and is 180 degree angle
-const percentToRad = (percent) => {
-  return percent * Math.PI
 }
 
 //Adds text undeneath the graft to display which percentage is the current one
