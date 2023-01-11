@@ -13,7 +13,7 @@ const App = () => {
               <GaugeChart
                 style={{}}
                 animate={false}
-                percent={0.7}
+                percent={0.75}
                 fontSize={58}
                 label='Read rate'
                 labelFontSize={30}

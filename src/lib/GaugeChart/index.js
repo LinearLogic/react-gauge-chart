@@ -362,11 +362,11 @@ const getColors = (props, nbArcsToDisplay) => {
     .range([colors[0], colors[colors.length - 1]]) //Use the first and the last color as range
     .interpolate(interpolateHsl)
   var colorArray = []
+  let thresholdCrossed = false
   for (var i = 1; i <= nbArcsToDisplay.current; i++) {
+    colorArray.push(thresholdCrossed ? INACTIVE_COLOR : colorScale(i))
     if (i / nbArcsToDisplay.current > props.percent) {
-      colorArray.push(INACTIVE_COLOR)
-    } else {
-      colorArray.push(colorScale(i))
+      thresholdCrossed = true
     }
   }
   return colorArray
