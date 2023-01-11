@@ -216,6 +216,8 @@ GaugeChart.defaultProps = {
   formatTextValue: null,
   fontSize: null,
   animateDuration: 3000,
+  label: '',
+  labelFontSize: 30,
 }
 
 GaugeChart.propTypes = {
@@ -239,6 +241,8 @@ GaugeChart.propTypes = {
   fontSize: PropTypes.string,
   animateDuration: PropTypes.number,
   animDelay: PropTypes.number,
+  label: PropTypes.string,
+  labelFontSize: PropTypes.string,
 }
 
 // This function update arc's datas when component is mounting or when one of arc's props is updated
