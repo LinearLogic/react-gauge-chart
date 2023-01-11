@@ -365,7 +365,7 @@ const getColors = (props, nbArcsToDisplay) => {
   let thresholdCrossed = false
   for (var i = 1; i <= nbArcsToDisplay.current; i++) {
     colorArray.push(thresholdCrossed ? INACTIVE_COLOR : colorScale(i))
-    if (i / nbArcsToDisplay.current > props.percent) {
+    if (i / nbArcsToDisplay.current >= props.percent) {
       thresholdCrossed = true
     }
   }
