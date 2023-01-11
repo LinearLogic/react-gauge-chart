@@ -1,3 +1,32 @@
+/*
+
+Not sure what the right wording is, but the spirit of this text is to convey
+use of the project available at https://github.com/Martin36/react-gauge-chart
+in accordance with the license below.
+
+MIT License
+
+Copyright (c) 2019 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
 import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react'
 import { arc, pie, select, scaleLinear, interpolateHsl } from 'd3'
 import PropTypes from 'prop-types'
@@ -257,26 +286,30 @@ const renderChart = (
   label,
   labelFontSize
 ) => {
-  updateDimensions(props, container, margin, width, height)
   //Set dimensions of svg element and translations
+  updateDimensions(props, container, margin, width, height)
   svg.current
     .attr('width', width.current + margin.current.left + margin.current.right)
     .attr('height', height.current + margin.current.top + margin.current.bottom)
   g.current.attr('transform', 'translate(' + margin.current.left + ', ' + margin.current.top + ')')
+
   //Set the radius to lesser of width or height and remove the margins
   //Calculate the new radius
   calculateRadius(width, height, outerRadius, margin, g)
   doughnut.current.attr('transform', 'translate(' + outerRadius.current + ', ' + outerRadius.current + ')')
+
   //Setup the arc
   arcChart.current
     .outerRadius(outerRadius.current)
     .innerRadius(outerRadius.current * (1 - props.arcWidth))
     .cornerRadius(props.cornerRadius)
     .padAngle(props.arcPadding)
+
   //Remove the old stuff
   doughnut.current.selectAll('.arc').remove()
   needle.current.selectAll('*').remove()
   g.current.selectAll('.text-group').remove()
+
   //Draw the arc
   var arcPaths = doughnut.current
     .selectAll('.arc')
@@ -298,7 +331,6 @@ const renderChart = (
   rangeMarkers
     .append('text')
     .text('0')
-    // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
     .style('font-size', 24) // todo: receive as prop
     .style('fill', props.needleColor)
     .style('text-anchor', 'middle')
@@ -307,7 +339,6 @@ const renderChart = (
   rangeMarkers
     .append('text')
     .text('100')
-    // this computation avoid text overflow. When formatted value is over 10 characters, we should reduce font size
     .style('font-size', 24) // todo: receive as prop
     .style('fill', props.needleColor)
     .style('text-anchor', 'middle')
